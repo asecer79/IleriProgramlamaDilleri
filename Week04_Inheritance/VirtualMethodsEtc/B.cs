@@ -14,11 +14,9 @@ namespace Week04_Inheritance.VirtualMethodsEtc
         }
 
         public int b;
-
         public override void M()
         {
             Console.WriteLine("I am in the Class B");
-
         }
     }
 }
