@@ -90,8 +90,12 @@ namespace Week09
 
             Sozluk<string, double> sozluk = new Sozluk<string, double>();
 
-            sozluk.Add("ad1", 12);
-            sozluk.Add("ad2", 2);
+            sozluk.Add("ad1", 1);
+            sozluk.Add("ad1", 2);
+            sozluk.Add("ad2", 3);
+            sozluk.Add("ad3", 4);
+            sozluk.Add("ad2", 5);
+
         }
     }
 
@@ -105,51 +109,57 @@ namespace Week09
         public Tree<T> Right { get; set; }
     }
 
-
-
     class Sozluk<TKey, TValue>
     {
-        private Node<TKey, TValue> Entries { get; set; }
+        private Node Root { get; set; }
 
-        class Node<TKey, TValue>
+        class Node
         {
-            public object Key { get; set; }
-            public object Value { get; set; }
-
-            public Node<TKey, TValue> Next { get; set; }
+            public TKey Key { get; set; }
+            public TValue Value { get; set; }
+            public Node Next { get; set; }
         }
 
-
-
-        public void Add(TKey key, TValue val)
+        public void Add(TKey key, TValue value)
         {
-            var tmp = Entries;
-
-            tmp = new Node<TKey, TValue>()
+            if (Root==null)
             {
+                Root = new Node()
+                {
+                    Key = key,
+                    Value = value
+                };
+            }
+            else
+            {
+                //overwrite same key for uniqueness
+                if (key.GetHashCode()==Root.Key.GetHashCode())
+                {
+                    Root.Value= value;
+                    return;//overwrite same key for uniqueness
+                }
 
-            };
+                var current = Root;
+                var newNode = new Node()
+                {
+                    Key = key,
+                    Value = value,
+                };
 
-            //while (true)
-            //{
-            //    if (tmp == null)
-            //    {
-            //        tmp = new Node<TKey, TValue>()
-            //        {
-            //            Key = key,
-            //            Value = val,
-            //        };
+                while (current.Next != null)
+                {
+                    //overwrite same key for uniqueness
+                    if (key.GetHashCode() == current.Key.GetHashCode())
+                    {
+                        current.Value = value;
+                        return;//overwrite same key for uniqueness
+                    } 
+                    
+                    current = current.Next;
+                }
 
-            //        break;
-            //    }
-            //    else
-            //    {
-            //        tmp = tmp.Next;
-            //    }
-
-            //    //Entries.Next.NodeValue = new KeyValuePair<TKey,TValue>(key, val);
-            //}
+                current.Next = newNode;
+            }
         }
     }
-
 }
