@@ -1,5 +1,6 @@
 ﻿
 using System.Collections;
+using System.Collections.Generic;
 
 namespace Week09
 {
@@ -90,12 +91,32 @@ namespace Week09
 
             Sozluk<string, double> sozluk = new Sozluk<string, double>();
 
-            sozluk.Add("ad1", 1);
-            sozluk.Add("ad1", 2);
-            sozluk.Add("ad2", 3);
-            sozluk.Add("ad3", 4);
-            sozluk.Add("ad2", 5);
+            sozluk.Add("0", 0);
+            sozluk.Add("1", 1);
+            sozluk.Add("2", 2);
+            sozluk.Add("3", 3);
 
+            sozluk.Add("0", 3);
+            sozluk.Add("1", 2);
+            sozluk.Add("2", 1);
+            sozluk.Add("3", 0);
+
+            //sozluk.Add("3", 3);
+            //sozluk.Add("2", 2);
+            //sozluk.Add("1", 1);
+            //sozluk.Add("0", 0);
+
+            sozluk["0"] = 100;
+
+            var v1 = sozluk["0"];
+
+            var keys = sozluk.Keys;
+            var values = sozluk.Values;
+
+            foreach (var item in sozluk)
+            {
+                var rec = item.Key;
+            }
         }
     }
 
@@ -109,8 +130,39 @@ namespace Week09
         public Tree<T> Right { get; set; }
     }
 
-    class Sozluk<TKey, TValue>
+    class Sozluk<TKey, TValue>:IEnumerable<KeyValuePair<TKey, TValue>>
     {
+
+        public TValue this[TKey key]
+        {
+            get
+            {
+                return GetValue(key);
+            }
+            set
+            {
+                Add(key,value);
+            }
+        }
+
+        public int Count { get; set; } = 0;
+
+        public TKey[] Keys
+        {
+            get
+            {
+                return GetKeys();
+            }
+        }
+
+        public TValue[] Values
+        {
+            get
+            {
+                return GetValues();
+            }
+        }
+
         private Node Root { get; set; }
 
         class Node
@@ -122,44 +174,148 @@ namespace Week09
 
         public void Add(TKey key, TValue value)
         {
-            if (Root==null)
+            if (Root == null)
             {
                 Root = new Node()
                 {
                     Key = key,
                     Value = value
                 };
+                Count++;
             }
             else
             {
-                //overwrite same key for uniqueness
-                if (key.GetHashCode()==Root.Key.GetHashCode())
-                {
-                    Root.Value= value;
-                    return;//overwrite same key for uniqueness
-                }
 
                 var current = Root;
-                var newNode = new Node()
+
+                if (current.Key.GetHashCode() == key.GetHashCode())
                 {
-                    Key = key,
-                    Value = value,
-                };
+                    current.Value = value;
+                    return;
+                }
+
+                var newNode = new Node() { Key = key, Value = value, };
 
                 while (current.Next != null)
-                {
+                {   
+                    current = current.Next;
                     //overwrite same key for uniqueness
-                    if (key.GetHashCode() == current.Key.GetHashCode())
+                    if (current.Key.GetHashCode()==key.GetHashCode())
                     {
                         current.Value = value;
-                        return;//overwrite same key for uniqueness
-                    } 
+                        return;
+                    }
                     
-                    current = current.Next;
                 }
 
                 current.Next = newNode;
+                Count++;
             }
+
+        }
+
+        private bool KeyExists(TKey key)
+        {
+            var current = Root;
+
+            if (key.GetHashCode() == current.Key.GetHashCode())
+                return true;
+            else
+            {
+                while (current.Next != null)
+                {
+                    current = current.Next;
+                    if (key.GetHashCode() == current.Key.GetHashCode())
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private TValue GetValue(TKey key)
+        {
+            var current = Root;
+
+            if (key.GetHashCode() == current.Key.GetHashCode())
+                return current.Value;
+            else
+            {
+                while (current.Next != null)
+                {
+                    current = current.Next;
+                    if (key.GetHashCode() == current.Key.GetHashCode())
+                    {
+                        return current.Value;
+                    }
+                }
+            }
+
+            return default(TValue);
+        }
+
+        private TKey[] GetKeys()
+        {
+            if (Count > 0)
+            {
+                TKey[] keys = new TKey[Count];
+                var current = Root;
+                keys[0] = current.Key;
+
+                int i = 1;
+                while (current.Next != null)
+                {
+                    current = current.Next;
+                    keys[i++] = current.Key;
+                }
+
+                return keys;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        private TValue[] GetValues()
+        {
+            if (Count > 0)
+            {
+                TValue[] values = new TValue[Count];
+                var current = Root;
+                values[0] = current.Value;
+
+                int i = 1;
+                while (current.Next != null)
+                {
+                    current = current.Next;
+                    values[i++] = current.Value;
+                }
+
+                return values;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+
+        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
+        {
+            for (int i = 0; i < Count; i++)
+            {
+                var key = Keys[i];
+                var value = Values[i];
+                yield return new KeyValuePair<TKey, TValue>(key, value);
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }
