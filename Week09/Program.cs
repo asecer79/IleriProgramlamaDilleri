@@ -101,10 +101,10 @@ namespace Week09
             sozluk.Add("2", 1);
             sozluk.Add("3", 0);
 
-            //sozluk.Add("3", 3);
-            //sozluk.Add("2", 2);
-            //sozluk.Add("1", 1);
-            //sozluk.Add("0", 0);
+            sozluk.Add("3", 3);
+            sozluk.Add("2", 2);
+            sozluk.Add("1", 1);
+            sozluk.Add("0", 0);
 
             sozluk["0"] = 100;
 
@@ -211,7 +211,6 @@ namespace Week09
                 current.Next = newNode;
                 Count++;
             }
-
         }
 
         private bool KeyExists(TKey key)
@@ -301,8 +300,7 @@ namespace Week09
                 return null;
             }
         }
-
-
+        
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
         {
             for (int i = 0; i < Count; i++)
