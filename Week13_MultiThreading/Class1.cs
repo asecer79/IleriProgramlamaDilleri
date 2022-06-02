@@ -6,9 +6,6 @@
         {
 
 
-
-
-
             //Console.WriteLine("Main starts");
 
             //Thread thread1 = new Thread(Print1); //async
